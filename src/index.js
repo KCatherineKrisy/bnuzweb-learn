@@ -1,9 +1,13 @@
 import React from 'react';
+import dva from 'dva';
 import ReactDOM from 'react-dom';
 import './index.less';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'antd/dist/antd.css';
+import createHistory from 'history/createBrowserHistory'
+
+// 
 
 ReactDOM.render(
   <React.StrictMode>
