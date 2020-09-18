@@ -1,21 +1,19 @@
-import React from 'react';
 import dva from 'dva';
-import ReactDOM from 'react-dom';
 import './index.less';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
 import 'antd/dist/antd.css';
-import createHistory from 'history/createBrowserHistory'
+import { createHashHistory } from 'history'
+import RouterConfig from './router'
 
-// 
+// 初始化
+const app = dva({
+  history: createHashHistory(),
+});
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,document.getElementById('root')
-);
+// Models
+app.model(require('./models/login').default);
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// 路由
+app.router(RouterConfig)
+
+// 启动
+app.start(`#root`);

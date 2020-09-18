@@ -1,17 +1,17 @@
-import React from 'react';
-import Home from './pages/home/home'
-import { Route, Switch, HashRouter } from 'react-router-dom'
+import React, { Component } from 'react';
+import Header from './components/header/header'
+import FooterItem from './components/footer/footer'
 
-function App() {
-  return (
-    <HashRouter>
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <Switch>
-          <Route path='/' component={Home} exact />
-        </Switch>
-      </React.Suspense>
-    </HashRouter>
-  );
+class App extends Component {
+    render() {
+        return (
+            <div>
+                <Header />
+                {this.props.children}
+                <FooterItem/>   
+            </div>
+        );
+    }
 }
 
 export default App;

@@ -1,15 +1,15 @@
 import React, { Component } from 'react'
-import { Row, Col, Input, Modal } from 'antd'
+import { Row, Col, Modal } from 'antd'
 import './header.less'
 import LoginForm from '../form/loginform'
 import RegisterForm from '../form/registerform'
-
-const { Search } = Input
+import Search from '../search/search'
 
 class Header extends Component {
   state = {
-    loginVisible: false,
-    registerVisible: true,
+    loginVisible: false, // 显示登录弹窗
+    registerVisible: false, // 显示注册弹窗
+    isLogin: false, // 是否已经登录
   }
 
   handleShowLogin = () => {
