@@ -10,9 +10,9 @@ class LoginForm extends Component {
 		password: ''
 	}
 
+	// 发送登录请求
 	handleUserLogin = () => {
 		const { mobile, password } = this.state;
-		console.log(mobile, password, 'userInfo')
 		this.props.dispatch({
 			type: 'login/login',
 			payload: {
@@ -22,6 +22,7 @@ class LoginForm extends Component {
 		});
 	}
 
+	// 获取用户手机号
 	handleGetUserMobile = e => {
 		let mobile = e.target.value;
 		this.setState({
@@ -29,10 +30,18 @@ class LoginForm extends Component {
 		})
 	}
 
+	// 获取用户密码
 	handleGetUserPwd = e => {
 		let password = e.target.value;
 		this.setState({
 			password
+		})
+	}
+
+	// 打开注册窗口
+	handleShowRegisterModal = () => {
+		this.props.dispatch({
+			type: 'login/showRegisterModal'
 		})
 	}
 
@@ -99,7 +108,7 @@ class LoginForm extends Component {
 								<img src={require('../../resource/assets/支付宝.png')} width="25px" height="25px" />
 								<img src={require('../../resource/assets/微博.png')} width="25px" height="25px" />
 							</div>
-							<a>注册新用户</a>
+							<a onClick={this.handleShowRegisterModal}>注册新用户</a>
 						</div>
 					</Form>
 				</div>
@@ -110,6 +119,4 @@ class LoginForm extends Component {
 }
 
 
-export default connect(({ loginForm }) => ({
-  loginForm,
-}))(LoginForm);
+export default connect(state => state.login)(LoginForm);

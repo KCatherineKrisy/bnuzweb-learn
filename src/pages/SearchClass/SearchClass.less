@@ -1,5 +1,55 @@
 .searchClass {
   display: flex;
   flex-direction: column;
-  margin-bottom: 40px;
+
+  .searchType {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    margin-top: 20px;
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      float: left;
+      margin-left: 65px;
+      font-size: 15px;
+    }
+
+    a {
+      vertical-align: middle;
+      color: black;
+    }
+
+    a:hover {
+      vertical-align: middle;
+      color: #1890ff;
+    }
+
+    .selectSite {
+      margin-left: 20px;
+    }
+  }
+
+  .searchList {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 100%;
+    background-color: #f2f5f7;
+
+    .searchList-body {
+      display: flex;
+      flex-direction: row;
+      margin: 30px 100px;
+    }
+
+    .searchList-footer {
+      margin: 0 auto;
+      margin-bottom: 40px;
+    }
+  }
+  
 }

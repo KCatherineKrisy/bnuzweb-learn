@@ -1,0 +1,47 @@
+.classCard {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  border: 1px solid #E9E9E9;
+  background-color: white;
+  margin-bottom: 10px;
+
+  .ant-divider-horizontal {
+    margin: 10px 0;
+    margin-left: 30px;
+    min-width: 80%;
+    width: 80%;
+    color: #E9E9E9;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+
+    .content-left {
+      margin-left: 30px;
+      img {
+        width: 80px;
+        height: 80px;
+      }
+    }
+
+    .content-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-right: 30px;
+      font-size: 15px;
+    }
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 30px 10px 30px;
+  }
+}

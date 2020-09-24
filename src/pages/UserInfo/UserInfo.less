@@ -1,0 +1,98 @@
+.userIndex {
+  min-height: 1200px;
+
+  .userIndex-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 150px;
+    background-image: url('../../resource/assets/用户背景.jpg');
+    background-size: cover;
+
+    .userIndex-header-left {
+      display: flex;
+      flex-direction: row;
+      margin-left: 150px;
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 40px;
+  
+        .user-info_name {
+          font-size: 28px;
+          font-weight: bold;
+        }
+      }
+      
+      .user-icon {
+        text-align: center;
+        line-height: 150px;
+
+        img {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+        }
+      }
+    }
+
+    .userIndex-header-right {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-right: 220px;
+
+      .classDetail {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+        .classNum {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          font-size: 16px;
+          text-align: center;
+        }
+
+        .commentNum {
+          display: flex;
+          flex-direction: column;
+          margin-left: 40px;
+          font-size: 16px;
+          text-align: center;
+        }
+
+        .num {
+          font-size: 28px;
+          font-weight: bold;
+        }
+      }
+
+      .setUserBtn {
+        margin-left: 70px;
+        button {
+          background: none;
+          border: 1px solid #797979;
+          border-radius: 30px;
+          width: 140px;
+          height: 40px;
+        }
+      }
+    }
+  }
+
+  .userIndex-content {
+    margin: 20px 150px;
+    .ant-layout {
+      background: white;
+    }
+
+    .ant-menu-inline {
+      border-right: 0;
+    }
+  }
+}

@@ -1,7 +1,4 @@
 .home {
-    margin: 0px;
-    padding: 0px;
-
     .photo {
         width: 77%;
         height: 410px;
@@ -29,6 +26,15 @@
                     font-size: 18px;
                     font-weight: bold;
                 }
+                a {
+                    vertical-align: middle;
+                    color: black;
+                }
+            
+                a:hover {
+                    vertical-align: middle;
+                    color: #1890ff;
+                }
             } 
         }
     }
@@ -44,26 +50,34 @@
     }
 
     .organization {
-        margin-top: 40px;
         text-align: center;
-        .organization-list {
-            margin-left: 155px;
+        h1 {
+            padding-top: 35px;
+        }
+
+        .organization-card {
             margin-bottom: 40px;
+            flex: 0 0 30%;
         }
     }
 
     .more {
-        margin-top: -10px;
         text-align: center;
     }
 
-    .classes-list {
-        width: 1000px;
+    .cardList {
+        display: flex;
+        flex-direction: row;
+        flex-flow: row wrap;
+        justify-content: space-between;
+        align-content: flex-start;
+        width: 1200px;
         margin-left: 165px;
-        padding-top: 50px;
-        text-align: center;
-        .classes {
+        padding-top: 20px;
+
+        .card {
             margin-bottom: 40px;
+            flex: 0 0 25%;
             img {
                 width: 205px;
                 height: 107px;
@@ -72,30 +86,33 @@
     }
 
     .news_question {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
         width: 100%;
         height: 585px;
         background-color: rgba(242, 242, 242, 0.4);
         margin-top: 40px;
         .news {
-            float: left;
             margin-left: 165px;
             margin-top: 40px;
             .news-item {
-                padding-top: 10px;
+                display: flex;
+                flex-direction: column;
             }
         }
         .question {
             width: 50%;
-            float: right;
             margin-top: 40px;
             .question-item {
-                padding-top: 10px;
+                display: flex;
+                flex-direction: column;
             }
         }
     }
     
     .aboutus {
-        margin-top: 70px;
+        margin-top: 60px;
         margin-left: 165px;
         .aboutus-word {
             float: right;

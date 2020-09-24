@@ -7,8 +7,7 @@ function parseJSON(response) {
 }
 
 function checkStatus(response) {
-  console.log(response, 'response')
-  if (response.status >= 200 && response.status < 300) {
+  if(response.status >= 200 && response.status <= 300) {
     return response;
   }
 
@@ -18,7 +17,13 @@ function checkStatus(response) {
 }
 
 export default function request(url, options) {
-  return fetch(baseApi + url, options)
+  const option = {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }
+  return fetch(baseApi + url, option)
     .then(checkStatus)
     .then(parseJSON)
     .then(data => ({ data }))

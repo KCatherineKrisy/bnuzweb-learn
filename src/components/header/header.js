@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Row, Col, Modal } from 'antd'
+import { Modal } from 'antd'
+import { connect } from 'dva'
 import './header.less'
 import LoginForm from '../form/loginform'
 import RegisterForm from '../form/registerform'
@@ -7,52 +8,57 @@ import Search from '../search/search'
 
 class Header extends Component {
   state = {
-    loginVisible: false, // 显示登录弹窗
-    registerVisible: false, // 显示注册弹窗
-    isLogin: false, // 是否已经登录
+    isLogin: false, // 是否已登录
+  };
+
+  componentDidMount() {
+    const token = localStorage.getItem('bsyx-user-token');
+    if(token) {
+      this.setState({
+        isLogin: true
+      })
+    }
   }
 
   handleShowLogin = () => {
-    this.setState({
-      loginVisible: true,
+    this.props.dispatch({
+      type: 'login/showLoginModal',
     })
   }
 
   handleCloseLogin = () => {
-    this.setState({
-      loginVisible: false,
+    this.props.dispatch({
+      type: 'login/closeLoginModal'
     })
   }
 
   handleCloseRegister = () => {
-    this.setState({
-      registerVisible: false,
+    this.props.dispatch({
+      type: 'login/closeRegisterModal'
     })
   }
 
   render() {
     return (
       <div className="header">
-        <Row gutter="100" className="header-row">
-          <Col span="4" className="header-left">
-            <img src={require("../../resource/assets/北师研学-logo.png")} alt="北师研学"/>
-            <h1>北师研学</h1>
-          </Col>
+        <div className="header-left">
+          <img src={require('../../resource/assets/北师研学-logo.png')} alt="北师研学"/>
+          <h1>北师研学</h1>
+        </div>
 
-          <Col span="10" className="header-middle">
-            <Search placeholder="请输入搜索内容" enterButton className="search" />
-          </Col>
+        <div className="header-middle">
+          <Search placeholder="请输入搜索内容" enterButton />
+        </div>
 
-          <Col span="10" className="header-right">
-            <span>热门好课</span>
-            <span>新上好课</span>
-            <span>关于我们</span>
-            <a onClick={this.handleShowLogin}>登录</a>
-          </Col>
-        </Row>
+        <div className="header-right">
+          <span>热门好课</span>
+          <span>新上好课</span>
+          <span>关于我们</span>
+          {this.state.isLogin ? <img className="header-right_right" src={require('../../resource/assets/头像.jpg')} width="30px" height="30px" /> : <a className="header-right_right" onClick={this.handleShowLogin}>登录</a>}
+        </div>
         
         <Modal
-          visible={this.state.loginVisible} 
+          visible={this.props.loginModalVisible} 
           title="" 
           footer="" 
           width="518px" 
@@ -63,7 +69,7 @@ class Header extends Component {
         </Modal>
 
         <Modal
-          visible={this.state.registerVisible} 
+          visible={this.props.registerModalVisible} 
           title="" 
           footer="" 
           width="518px" 
@@ -77,4 +83,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default connect(state => state.login)(Header);
