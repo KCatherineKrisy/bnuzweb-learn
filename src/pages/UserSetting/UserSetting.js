@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Divider } from 'antd';
 import './UserSetting.less'
-
+import { withRouter } from 'react-router';
+import { connect } from 'dva'
 class UserSetting extends Component {
   state = {
     user: {
@@ -12,12 +12,12 @@ class UserSetting extends Component {
   };
 
   render() {
-    const { user } = this.state;
+    const { user } = this.props;
     return (
       <div className="userSetting">
         <div className="userSetting-side">
           <div className="user-detail">
-            <img src={user.url} width="120" height="120" />
+            <img src={user.avatar} width="120" height="120" />
             <div className="user-des">
               <span className="user-name">{user.name}</span>
               <span className="user-id">ID:{user.id}</span>
@@ -25,16 +25,19 @@ class UserSetting extends Component {
           </div>
           <div className="accountManage">
             <span className="account_moduleName">账户管理</span>
-            <Divider width="200px" style={{ color: '#797979' }}/>
+            <div className="divider"></div>
             <div className="manageBtn">
-              <span>个人信息</span>
-              <span>账户绑定</span>
+              <span className="personalInfo">个人信息</span>
+              <span className="accountBind">账户绑定</span>
             </div>
           </div>
+        </div>
+        <div className="userSetting-content">
+          {this.props.children}
         </div>
       </div>
     );
   }
 }
 
-export default UserSetting;
+export default connect(state => state.user)(UserSetting);

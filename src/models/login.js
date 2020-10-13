@@ -1,6 +1,6 @@
 import * as userService from '../services/UserAPI'
 import { Modal } from 'antd'
-import React from 'react'
+
 
 export default {
   // 当前 model 的名称
@@ -8,7 +8,6 @@ export default {
 
   // 该 Model 当前的状态。数据保存在这里，直接决定了视图层的输出
   state: {
-    loginModalVisible: false, // 显示登录弹窗
     registerModalVisible: false, // 显示注册弹窗
     isLogin: false, // 是否已经登录
   },

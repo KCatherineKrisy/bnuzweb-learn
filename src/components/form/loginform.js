@@ -19,7 +19,9 @@ class LoginForm extends Component {
 				mobile: mobile,
 				password: password,
 			},
-		});
+		}).then(() => {
+			this.props.onClickLogin();
+		})
 	}
 
 	// 获取用户手机号

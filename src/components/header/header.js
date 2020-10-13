@@ -9,27 +9,39 @@ import Search from '../search/search'
 class Header extends Component {
   state = {
     isLogin: false, // 是否已登录
+    loginModalVisible: false, // 显示登录弹窗
   };
 
   componentDidMount() {
+    this.getToken();
+  }
+
+  // 判斷是否存在 token
+  getToken = () => {
     const token = localStorage.getItem('bsyx-user-token');
     if(token) {
       this.setState({
         isLogin: true
+      }, () => {
+        console.log('token')
       })
     }
   }
 
+  // 顯示登錄彈窗
   handleShowLogin = () => {
-    this.props.dispatch({
-      type: 'login/showLoginModal',
+    this.setState({
+      loginModalVisible: true
     })
   }
 
+  // 隱藏登錄彈窗
   handleCloseLogin = () => {
-    this.props.dispatch({
-      type: 'login/closeLoginModal'
-    })
+     this.setState({
+      loginModalVisible: false
+     }, () => {
+      this.getToken();
+     })
   }
 
   handleCloseRegister = () => {
@@ -58,14 +70,14 @@ class Header extends Component {
         </div>
         
         <Modal
-          visible={this.props.loginModalVisible} 
+          visible={this.state.loginModalVisible} 
           title="" 
           footer="" 
           width="518px" 
           height="562px"
           onCancel={this.handleCloseLogin}
         >
-          <LoginForm />
+          <LoginForm onClickLogin={this.handleCloseLogin}/>
         </Modal>
 
         <Modal

@@ -1,6 +1,7 @@
 import fetch from 'dva/fetch'
 
 const baseApi = 'http://120.25.124.250:8150';
+let token = localStorage.getItem('bsyx-user-token');
 
 function parseJSON(response) {
   return response.json();
@@ -16,14 +17,17 @@ function checkStatus(response) {
   throw error;
 }
 
-export default function request(url, options) {
-  const option = {
-    ...options,
+export default function request(url, data) {
+  const options = {
+    method: data.method,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'user-token': token,
+      ...data.headers
     },
+    body: data.body
   }
-  return fetch(baseApi + url, option)
+  return fetch(baseApi + url, options)
     .then(checkStatus)
     .then(parseJSON)
     .then(data => ({ data }))

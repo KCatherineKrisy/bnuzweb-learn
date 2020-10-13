@@ -21,8 +21,6 @@ export default {
 
   // Action 处理器，处理同步动作，用来算出最新的 State
   reducers: {
-    'login'(state, { payload: status}) {
-      
-    }
+
   },
 }

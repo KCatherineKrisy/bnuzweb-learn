@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Layout, Menu } from 'antd'
-import { withRouter } from "react-router-dom"
+import { withRouter, Link } from 'dva/router'
 import { BookOutlined, BellOutlined, CalculatorOutlined, FormOutlined } from '@ant-design/icons';
 import './UserInfo.less'
 
@@ -21,7 +21,7 @@ class UserInfo extends Component {
   }
 
   handleLinkSetting = () => {
-
+    this.props.history.push('/setting')
   }
 
   render() {
@@ -51,7 +51,7 @@ class UserInfo extends Component {
               </div>
             </div>
             <div className="setUserBtn">
-            <button>个人设置</button>
+            <button onClick={this.handleLinkSetting}>个人设置</button>
             </div>
           </div>
         </div>

@@ -27,3 +27,27 @@ export function register(params) {
   });
 }
 
+/**
+ * 获取个人信息页
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function getUserInfo(params) {
+  return request(API.USER.GET_USER_DETAIL, {
+    method: 'GET'
+  })
+}
+
+/**
+ *  更新个人信息
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function updateUserInfo(params) {
+  return request(API.USER.UPDATE_USER_DETAIL, {
+    method: 'PUT',
+    body: JSON.stringify(params)
+  });
+}

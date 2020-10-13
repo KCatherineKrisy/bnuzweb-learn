@@ -1,5 +1,7 @@
 .userSetting {
-  min-height: 1200px;
+  display: flex;
+  flex-direction: row;
+  min-height: 800px;
   .userSetting-side {
     display: flex;
     flex-direction: column;
@@ -37,13 +39,30 @@
         font-weight: bold;
       }
 
+      .divider {
+        margin: 0 auto;
+        margin-bottom: 20px;
+        width: 180px;
+        height: 1px;
+        border-top: 1px solid #797979;
+      }
+
       .manageBtn {
         display: flex;
         flex-direction: column;
         text-align: center;
         font-size: 15px;
-        
+        font-weight: bold;
+
+        .personalInfo {
+          margin-bottom: 30px;
+        }
       }
     }
+  }
+
+  .userSetting-content {
+    margin-left: 100px;
+    margin-top: 50px;
   }
 }
