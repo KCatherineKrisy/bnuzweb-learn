@@ -6,11 +6,35 @@ export default {
 
   state: {
     user: {}, // 用户信息
+    registerModalVisible: false, // 显示注册弹窗
+    isLogin: false, // 是否已经登录
   },
 
   subscriptions: {},
 
   effects: {
+    *login({ payload: value }, { call, put }) {
+      const data = yield call(userService.login, value);
+      if(data.data.success === true) {
+        const token = data.data.data.token;
+        localStorage.setItem('bsyx-user-token', token);
+        yield put({
+          type: 'closeLoginModal'
+        })
+      } else {
+        Modal.error({
+          title: '登录失败',
+          content: '用户名或密码错误，请重试！'
+        })
+      }
+    },
+
+    *register({ payload: value}, { call }) {
+      console.log('调用注册函数')
+      const data = yield call(userService.login, value);
+      
+    },
+
     *getUserDetail({payload: value}, { call, put }) {
       const data = yield call(userService.getUserInfo);
       if(data.data.success === true) {
@@ -38,6 +62,26 @@ export default {
     // 更新用户信息
     getUserInfo(state, action) {
       return { ...state, user: action.payload.user }
+    },
+
+    // 显示注册窗口
+    showRegisterModal() {
+      return { registerModalVisible: true, loginModalVisible: false } 
+    },
+
+    // 关闭注册窗口
+    closeRegisterModal() {
+      return { registerModalVisible: false } 
+    },
+
+    // 显示登录窗口
+    showLoginModal() {
+      return { loginModalVisible: true } 
+    },
+
+    // 关闭登录窗口
+    closeLoginModal() {
+      return { loginModalVisible: false } 
     },
   },
 }

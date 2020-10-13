@@ -181,4 +181,4 @@ class RegisterForm extends Component {
 } 
 
 
-export default connect( state => state.login )(RegisterForm);
+export default connect( state => state.user )(RegisterForm);

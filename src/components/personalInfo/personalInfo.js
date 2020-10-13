@@ -10,6 +10,7 @@ class PersonalInfo extends Component {
   state = {
     user: {},
     showUpdateInfoModal: false, // 修改信息 Modal
+    btnDisable: false, // 表单按钮是否可用
   }
 
   // 获取用户信息
@@ -27,6 +28,21 @@ class PersonalInfo extends Component {
         user: that.props.user
       })
     })
+  }
+
+  // 判断表单是否修改过
+  formIsChanged = async () => {
+    const { user } = this.state;
+    const values = await this.formRef.current.validateFields();
+    if(values.nickname === user.nickname && values.sex === user.sex && values.age === user.age && values.sign === user.sign) {
+      this.setState({
+        btnDisable: false
+      })
+    } else {
+      this.setState({
+        btnDisable: true
+      })
+    }
   }
 
   // 提交表單
@@ -56,11 +72,6 @@ class PersonalInfo extends Component {
         content: '哎呀出错了，请重试！'
       })
     }
-  }
-
-  // 表单数据修改
-  handleFormChange = ({ value }) => {
-    console.log(value)
   }
 
   // 重置表单
@@ -114,7 +125,6 @@ class PersonalInfo extends Component {
         </div>
 
         <Modal 
-          className="updateInfoModal"
           visible={this.state.showUpdateInfoModal}
           onCancel={this.closeUpdateInfoModal}
           title="" 
@@ -123,25 +133,32 @@ class PersonalInfo extends Component {
           <Form 
             name="updateUserInfo" 
             ref={this.formRef}
+            className="updateInfoModal"
+            initialValues={{ 
+              nickname: user.nickname,
+              sex: user.sex,
+              age: user.age,
+              sign: user.sign
+            }}
           >
             <Form.Item label="昵称" name="nickname">
-                <Input defaultValue={user.nickname} onChange={this.handleFormChange} />  
+                <Input onChange={this.formIsChanged} />  
             </Form.Item>
             <Form.Item label="性别" name="sex">
-              <Radio.Group defaultValue={user.sex}>
+              <Radio.Group onChange={this.formIsChanged}>
                 <Radio value={1}>女</Radio>
                 <Radio value={2}>男</Radio>
               </Radio.Group>
             </Form.Item>
             <Form.Item label="年龄" name="age">
-              <Input defaultValue={user.age} />
+              <Input onChange={this.formIsChanged} />
             </Form.Item>
             <Form.Item label="签名" name="sign">
-              <Input.TextArea key={1} defaultValue={user.sign} />
+              <Input maxLength={20} onChange={this.formIsChanged} />
             </Form.Item>
           </Form>
           <Button onClick={this.handleResetForm}>重置</Button>
-          <Button type="primary" onClick={this.handleFinishForm}>提交</Button>
+          <Button type="primary" onClick={this.handleFinishForm} disabled={!this.state.btnDisable}>提交</Button>
         </Modal>
       </div>
     );

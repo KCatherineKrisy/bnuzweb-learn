@@ -21,7 +21,7 @@ class UserInfo extends Component {
   }
 
   handleLinkSetting = () => {
-    this.props.history.push('/setting')
+    this.props.history.push('/setting/personalInfo')
   }
 
   render() {

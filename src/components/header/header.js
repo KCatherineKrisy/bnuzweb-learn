@@ -46,7 +46,7 @@ class Header extends Component {
 
   handleCloseRegister = () => {
     this.props.dispatch({
-      type: 'login/closeRegisterModal'
+      type: 'user/closeRegisterModal'
     })
   }
 
@@ -95,4 +95,4 @@ class Header extends Component {
   }
 }
 
-export default connect(state => state.login)(Header);
+export default connect(state => state.user)(Header);

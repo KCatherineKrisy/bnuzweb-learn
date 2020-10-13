@@ -14,7 +14,7 @@ class LoginForm extends Component {
 	handleUserLogin = () => {
 		const { mobile, password } = this.state;
 		this.props.dispatch({
-			type: 'login/login',
+			type: 'user/login',
 			payload: {
 				mobile: mobile,
 				password: password,
@@ -43,7 +43,7 @@ class LoginForm extends Component {
 	// 打开注册窗口
 	handleShowRegisterModal = () => {
 		this.props.dispatch({
-			type: 'login/showRegisterModal'
+			type: 'user/showRegisterModal'
 		})
 	}
 
@@ -121,4 +121,4 @@ class LoginForm extends Component {
 }
 
 
-export default connect(state => state.login)(LoginForm);
+export default connect(state => state.user)(LoginForm);
