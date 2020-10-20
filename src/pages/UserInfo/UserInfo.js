@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Layout, Menu } from 'antd'
-import { withRouter, Link } from 'dva/router'
+import { withRouter } from 'dva/router'
 import { BookOutlined, BellOutlined, CalculatorOutlined, FormOutlined } from '@ant-design/icons';
+import { connect } from 'dva'
 import './UserInfo.less'
 
 const { Content, Sider } = Layout;
@@ -9,17 +10,25 @@ const { Content, Sider } = Layout;
 @withRouter
 class UserInfo extends Component {
   state = {
-    user: {
-      name: 'janette',
-      des: '简单的一句话，我就是写个毕设的',
-      url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1600933551900&di=c97bb7c3d2f64f55d451c9e1ad6dcc76&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201712%2F19%2F20171219234358_VRdrH.thumb.700_0.jpeg'
-    },
+    user: {},
     classDetail: {
       num: 42,
       comment: 10,
     },
   }
 
+  // 獲取個人信息
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'user/getUserDetail',
+    }).then(() => {
+      this.setState({
+        user: this.props.user
+      })
+    })
+  }
+
+  // 跳轉到個人設置頁面
   handleLinkSetting = () => {
     this.props.history.push('/setting/personalInfo')
   }
@@ -31,11 +40,11 @@ class UserInfo extends Component {
         <div className="userIndex-header">
           <div className="userIndex-header-left">
             <div className="user-icon">
-              <img src={user.url} />
+              <img src={user.avatar} />
             </div>
             <div className="user-info">
-              <span className="user-info_name">{user.name}</span>
-              <span className="user-info_des">{user.des}</span>
+              <span className="user-info_name">{user.nickname}</span>
+              <span className="user-info_des">{user.sign}</span>
             </div>
           </div>
 
@@ -80,4 +89,4 @@ class UserInfo extends Component {
   }
 }
 
-export default UserInfo;
+export default connect( state => state.user )(UserInfo);

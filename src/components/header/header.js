@@ -4,7 +4,7 @@ import { connect } from 'dva'
 import './header.less'
 import LoginForm from '../form/loginform'
 import RegisterForm from '../form/registerform'
-import Search from '../search/search'
+import SearchBar from '../searchbar/searchbar'
 
 class Header extends Component {
   state = {
@@ -22,8 +22,6 @@ class Header extends Component {
     if(token) {
       this.setState({
         isLogin: true
-      }, () => {
-        console.log('token')
       })
     }
   }
@@ -59,7 +57,7 @@ class Header extends Component {
         </div>
 
         <div className="header-middle">
-          <Search placeholder="请输入搜索内容" enterButton />
+          <SearchBar placeholder="请输入搜索内容" enterButton />
         </div>
 
         <div className="header-right">

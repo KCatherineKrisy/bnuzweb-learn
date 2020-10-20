@@ -13,6 +13,7 @@ export default {
   subscriptions: {},
 
   effects: {
+    // 登錄
     *login({ payload: value }, { call, put }) {
       const data = yield call(userService.login, value);
       if(data.data.success === true) {
@@ -29,12 +30,14 @@ export default {
       }
     },
 
+    // 註冊
     *register({ payload: value}, { call }) {
       console.log('调用注册函数')
       const data = yield call(userService.login, value);
       
     },
 
+    // 獲取個人信息
     *getUserDetail({payload: value}, { call, put }) {
       const data = yield call(userService.getUserInfo);
       if(data.data.success === true) {
@@ -44,7 +47,8 @@ export default {
             user: data.data.data.userDetail
           }
         })
-      } else {
+      } 
+      else {
         Modal.error({
           title: '信息获取失败',
           content: '哎呀出错了，请重试！'
@@ -52,6 +56,7 @@ export default {
       }
     },
 
+    // 修改個人信息
     *updateUserDetail({payload: value}, { call, put }) {
        const data = yield call(userService.updateUserInfo, value);
        console.log(data,'updateUserInfo');

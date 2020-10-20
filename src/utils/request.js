@@ -1,6 +1,6 @@
 import fetch from 'dva/fetch'
 
-const baseApi = 'http://120.25.124.250:8150';
+const baseApi = 'http://120.25.124.250:8005';
 let token = localStorage.getItem('bsyx-user-token');
 
 function parseJSON(response) {

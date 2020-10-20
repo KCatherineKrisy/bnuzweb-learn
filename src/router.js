@@ -2,12 +2,12 @@ import React, { Suspense }  from 'react'
 import { BrowserRouter, Route, Switch } from 'dva/router'
 import App from './App'
 import HomePage from './pages/homepage/homepage'
-import SearchClass from './pages/SearchClass/SearchClass'
+import SearchItem from './pages/SearchItem/SearchItem'
 import UserInfo from './pages/UserInfo/UserInfo'
 import UserSetting from './pages/UserSetting/UserSetting'
 import ClassList from './components/class-list/class-list'
 import PersonalInfo from './components/personalInfo/personalInfo'
-import SearchOrg from './pages/SearchOrg/SearchOrg'
+import ClassDetail from './pages/ClassDetail/ClassDetail'
 
 const RouterConfig = (({ history }) => (
   <BrowserRouter history={history}>
@@ -15,8 +15,8 @@ const RouterConfig = (({ history }) => (
       <App>
         <Switch>
           <Route path='/' component={HomePage} exact/>
-          <Route path='/search-class' component={SearchClass} />
-          <Route path='/search-organization' component={SearchOrg} />
+          <Route path='/search/:type/:keywords' component={SearchItem} />
+          <Route path='/ClassDetail/:id' component={ClassDetail} />
           <Route path='/setting/personalInfo'>
             <UserSetting>
               <Switch>

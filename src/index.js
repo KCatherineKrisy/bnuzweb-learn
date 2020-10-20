@@ -10,8 +10,8 @@ const app = dva({
 });
 
 // Models
-app.model(require('./models/login').default);
 app.model(require('./models/user').default);
+app.model(require('./models/class').default);
 
 // 路由
 app.router(RouterConfig)

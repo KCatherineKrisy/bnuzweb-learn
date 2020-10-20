@@ -20,12 +20,11 @@ class PersonalInfo extends Component {
 
   // 获取个人信息数据
   getUserInfo = () => {
-    let that = this;
     this.props.dispatch({
       type: 'user/getUserDetail',
     }).then(() => {
-      that.setState({
-        user: that.props.user
+      this.setState({
+        user: this.props.user
       })
     })
   }
