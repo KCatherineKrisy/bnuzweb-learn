@@ -1,17 +1,24 @@
 import React, { Component } from 'react';
-import { Input, Select, message } from 'antd'
+import { Input, message } from 'antd'
 import { connect } from 'dva'
 import './searchbar.less'
 import { withRouter } from 'dva/router';
 
-const { Option } = Select;
 const { Search } = Input;
 
 @withRouter
 class SearchBar extends Component {
   state = {
     keywords: '', // 關鍵詞
-    type: 'class', // 查找类型
+  }
+
+  componentDidMount() {
+    let keywords = this.props.match.params.keywords;
+    let type = this.props.match.params.type;
+    console.log(this.props.match.url, 'this.props.match.url')
+    if(type === 'keywords') {
+      this.setState({ keywords: keywords })
+    }
   }
 
   // 更新關鍵詞
@@ -37,40 +44,15 @@ class SearchBar extends Component {
           searchFuc: 'click'
         }
       }).then(() => {
-        this.props.history.push(`/search/${this.state.type}/${this.state.keywords}`)
+        this.props.history.push(`/search/keywords/${this.state.keywords}`)
       })
     }
   }
 
-  // 獲取關鍵詞查詢機構
-  handleSearchOrg = () => {
-
-  }
-
-  // 修改查找类型
-  handleChangeType = (value) => {
-    this.setState({ type: value })
-  }
-
-  // 點擊查詢，判斷查詢類型
-  handleSearchType = () => {
-    if (this.state.type === 'class') {
-      this.handleSearchClass();
-    } else {
-      this.handleSearchOrg();
-    }
-  }
-
   render() {
-    const prefixSelector = (
-      <Select defaultValue="class" onChange={this.handleChangeType}>
-        <Option value="class">课程</Option>
-        <Option value="organization">机构</Option>
-      </Select>
-    );
     return (
       <div className="search">
-        <Search allowClear addonBefore={prefixSelector} placeholder="请输入关键词！" enterButton="Search" onChange={this.updateKeyword} onSearch={this.handleSearchType} />
+        <Search allowClear placeholder="请输入关键词！" enterButton="Search" value={this.state.keywords} onChange={this.updateKeyword} onSearch={this.handleSearchClass} />
       </div>
     );
   }

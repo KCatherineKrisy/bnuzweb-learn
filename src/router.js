@@ -8,6 +8,8 @@ import UserSetting from './pages/UserSetting/UserSetting'
 import ClassList from './components/class-list/class-list'
 import PersonalInfo from './components/personalInfo/personalInfo'
 import ClassDetail from './pages/ClassDetail/ClassDetail'
+import NotFound from './pages/NotFound/NotFound'
+import OrgList from './pages/OrgList/OrgList'
 
 const RouterConfig = (({ history }) => (
   <BrowserRouter history={history}>
@@ -17,6 +19,7 @@ const RouterConfig = (({ history }) => (
           <Route path='/' component={HomePage} exact/>
           <Route path='/search/:type/:keywords' component={SearchItem} />
           <Route path='/ClassDetail/:id' component={ClassDetail} />
+          <Route path='/OrgList' component={OrgList} />
           <Route path='/setting/personalInfo'>
             <UserSetting>
               <Switch>
@@ -31,6 +34,7 @@ const RouterConfig = (({ history }) => (
               </Switch>
             </UserInfo>  
           </Route>
+          <Route path='*' component={NotFound} />
         </Switch>
       </App>
     </Suspense>

@@ -1,12 +1,12 @@
 import dva from 'dva';
 import './index.less';
 import 'antd/dist/antd.css';
-import { createHashHistory } from 'history'
+import { createBrowserHistory } from 'history'
 import RouterConfig from './router'
 
 // 初始化
 const app = dva({
-  history: createHashHistory(),
+  history: createBrowserHistory(),
 });
 
 // Models

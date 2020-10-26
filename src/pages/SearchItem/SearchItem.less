@@ -43,8 +43,19 @@
 
     .searchList-body {
       display: flex;
+      flex-wrap: wrap;
       flex-direction: row;
       margin: 0px 100px 30px 100px;
+      
+      li {
+        float: left;
+        list-style: none;
+        width: 25%;
+      }
+
+      .dataEmpty {
+        margin: 0 auto;
+      }
     }
 
     .searchList-footer {

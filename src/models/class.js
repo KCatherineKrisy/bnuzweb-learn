@@ -37,8 +37,9 @@ export default {
     // 按照關鍵詞搜索課程
     *searchClassItem({ payload: value }, { call, put, select }) {
       let keywords = yield select(state => state.class.keywords);
+      // 关键词不为空且和现有的关键词不同，则重置页数为 1
       if(!value.keywords || value.keywords !== keywords || value.searchFuc === 'click') {
-        yield put({ type: 'resetPageNo'})
+        yield put({ type: 'resetData'})
       }
       yield put({
         type: 'updateSearchKeywords',
@@ -113,8 +114,8 @@ export default {
     },
 
     // 重置页数
-    resetPageNo(state, action) {
-      return { ...state, pageNo: 1 }
+    resetData(state, action) {
+      return { ...state, pageNo: 1, searchClassList: [], searchOrgList: [], total: 0 }
     },
 
     // 更新活動信息

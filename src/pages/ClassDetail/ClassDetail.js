@@ -20,10 +20,12 @@ class ClassDetail extends Component {
 
   componentDidMount() {
     // 根據 ID 獲取數據
+    let id = this.props.match.params.id;
+    console.log(id, 'id');
     this.props.dispatch({
       type: 'class/getClassDetailById',
       payload: {
-        id: '1317387778898415617'
+        id: id
       }
     }).then(() => {
       this.setState({
