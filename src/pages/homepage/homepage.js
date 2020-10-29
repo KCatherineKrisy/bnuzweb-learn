@@ -116,11 +116,11 @@ class HomePage extends Component {
           <div className="news">
             <h1>新闻资讯</h1>
             <div className="news-item">
-              <NewsShow />
-              <NewsShow />
-              <NewsShow />
-              <NewsShow />
-              <NewsShow />
+              <NewsShow title='资讯' />
+              <NewsShow title='资讯' />
+              <NewsShow title='资讯' />
+              <NewsShow title='资讯' />
+              <NewsShow title='资讯' />
             </div>
           </div>
           <div className="question">

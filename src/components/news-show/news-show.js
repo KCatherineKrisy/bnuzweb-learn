@@ -8,8 +8,8 @@ class NewsShow extends Component {
     render() {
         return (
             <div className="newsShow">
-                <img src={require('../../resource/assets/地理.jpg')} />
-                <h2>我是一个资讯的题目</h2>
+                <img src={this.props.pic} />
+                <h2>{this.props.title}</h2>
             </div>
         );
     }

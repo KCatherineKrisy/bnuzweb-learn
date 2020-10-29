@@ -1,12 +1,17 @@
 .orgCard {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
+  margin-top: 20px;
   width: 1040px;
   height: 140px;
   border:1px solid black;
 
   .orgCard-left {
+    display: flex;
+    flex-direction: row;
+    margin-left: 100px;
+    align-self: center;
     img {
       width: 160px;
       height: 108px;
@@ -16,11 +21,16 @@
   .orgCard-middle {
     display: flex;
     flex-direction: column;
+    align-self: center;
+    font-weight: bold;
     margin-left: 20px;
-    margin-right: 200px;
   }
 
   .orgCard-right {
-
+    margin-right: 100px;
+    align-self: center;
+    font-weight: bold;
+    font-size: 18px;
+    color: orange;
   }
 }

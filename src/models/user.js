@@ -17,11 +17,11 @@ export default {
     *login({ payload: value }, { call, put }) {
       const data = yield call(userService.login, value);
       if(data.data.success === true) {
-        const token = data.data.data.token;
-        localStorage.setItem('bsyx-user-token', token);
         yield put({
           type: 'closeLoginModal'
         })
+        const token = data.data.data.token;
+        localStorage.setItem('bsyx-user-token', token);
       } else {
         Modal.error({
           title: '登录失败',

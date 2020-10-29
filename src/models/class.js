@@ -1,4 +1,5 @@
 import * as classService from '../services/ClassAPI'
+import * as userService from '../services/UserAPI'
 import { Modal } from 'antd'
 
 export default {
@@ -16,6 +17,8 @@ export default {
     subjectList: [], // 课程类型 
     regionTree: [], // 地区列表
     classDetail: {}, // 活動詳細信息
+    comments: [], // 活動評論
+    user: {}, // 用戶信息
   },
 
   subscriptions: {},
@@ -84,6 +87,46 @@ export default {
           }
         })
       }
+    },
+
+    // 添加評論到指定活動 id
+    *addComment({ payload: value }, { call, put, select }) {
+      const data = yield call(classService.addComment, value);
+      const activityId = yield select(state => state.classDetail.item.id);
+      if(data.data.code === 20000) {
+        const newData = yield call(classService.getClassDetailId, activityId);
+        if(newData.data.success === true) {
+          yield put({
+            type: 'updateClassComments',
+            payload: {
+              comments: newData.data.data.comments,
+            }
+          })
+        } else {
+          Modal.error({
+            title: '评论失败',
+            content: '评论失败，请重试哦！'
+          })
+        }
+      } else if (data.data.code === 20003) {
+        Modal.error({
+          title: '评论失败',
+          content: '报名参加课程后才能评论哦，快来报名吧！'
+        })
+      }
+    },
+
+    // 獲取用戶信息用於評論
+    *getUserInfo({ payload: value }, { call, put, select }) {
+      const data = yield call(userService.getUserInfo);
+      if(data.data.success === true) {
+        yield put({
+          type: 'updateUserInfo',
+          payload: {
+            user: data.data.data.userDetail
+          }
+        })
+      }
     }
   },
 
@@ -120,14 +163,17 @@ export default {
 
     // 更新活動信息
     updateClassDetail(state, action) {
-      let classDetail = action.payload.classDetail;
-      classDetail.items.map((item, index) => {
-        item.key = index + 1
-      })
-      return {
-        ...state,
-        classDetail: classDetail,
-      }
+      return { ...state, classDetail: action.payload.classDetail, comments: action.payload.classDetail.comments }
+    },
+
+    // 更新活動評論列表
+    updateClassComments(state, action) {
+      return { ...state, comments: action.payload.comments }
+    },
+
+    // 更新用戶信息
+    updateUserInfo(state, action) {
+      return { ...state, user: action.payload.user }
     }
   }
 }

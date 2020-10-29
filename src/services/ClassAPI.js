@@ -38,3 +38,30 @@ export function getClassDetailId(params) {
     method: 'GET',
   })
 }
+
+/**
+ * 添加評論到指定活動 id
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function addComment(params) {
+  return request(API.CLASS.ADD_COMMENT, {
+    method: 'POST',
+    body: JSON.stringify(params)
+  })
+}
+
+/**
+ * 根據活動 id 獲取評論，用於評論後局部刷新
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function getCommentByActivity(params) {
+  const pattern = compile(API.CLASS.GET_COMMENT_BY_ACTIVITY);
+  const url = pattern({ id: params.id });
+  return request(url, {
+    method: 'GET'
+  })
+}

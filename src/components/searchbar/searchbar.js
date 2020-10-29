@@ -13,9 +13,10 @@ class SearchBar extends Component {
   }
 
   componentDidMount() {
-    let keywords = this.props.match.params.keywords;
-    let type = this.props.match.params.type;
-    console.log(this.props.match.url, 'this.props.match.url')
+    let url = this.props.location.pathname;
+    let params = url.split('/');
+    let type = params[params.length - 2];
+    let keywords = params[params.length - 1];
     if(type === 'keywords') {
       this.setState({ keywords: keywords })
     }

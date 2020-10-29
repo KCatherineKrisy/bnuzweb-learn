@@ -10,6 +10,7 @@ import PersonalInfo from './components/personalInfo/personalInfo'
 import ClassDetail from './pages/ClassDetail/ClassDetail'
 import NotFound from './pages/NotFound/NotFound'
 import OrgList from './pages/OrgList/OrgList'
+import OrgDetail from './pages/OrgDetail/OrgDetail'
 
 const RouterConfig = (({ history }) => (
   <BrowserRouter history={history}>
@@ -20,6 +21,7 @@ const RouterConfig = (({ history }) => (
           <Route path='/search/:type/:keywords' component={SearchItem} />
           <Route path='/ClassDetail/:id' component={ClassDetail} />
           <Route path='/OrgList' component={OrgList} />
+          <Route path='/OrgDetail/:oid' component={OrgDetail} />
           <Route path='/setting/personalInfo'>
             <UserSetting>
               <Switch>

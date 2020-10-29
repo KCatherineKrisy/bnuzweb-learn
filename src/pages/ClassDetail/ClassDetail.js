@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'dva'
-import { Table, Divider, Space, Modal, Form, Input, Button } from 'antd'
+import { Tabs, Divider, Modal, Form, Input, Button, Comment, Avatar, List } from 'antd'
+import moment from 'moment';
+import NoteCard from '../../components/note-card/note-card'
 import './ClassDetail.less'
+
+const { TextArea } = Input;
+const { TabPane } = Tabs;
 
 const layout = {
   labelCol: { span: 8 },
@@ -12,35 +17,42 @@ class ClassDetail extends Component {
   formRef = React.createRef();
 
   state = {
-    classIndex: 0, // 点击进入时选择的活动位于 items 中的位置
-    chooseClassIndex: 0, // 选中报名的课程 index
     showAppointmentModal: false, // 展示报名框
     btnDisable: false, // 是否可以报名
+    submiiting: false, // 是否提交中
+    value: '', // 评论文本
+    user: {}, // 用戶信息
+    isLogin: false, // 是否登錄
   }
 
   componentDidMount() {
     // 根據 ID 獲取數據
     let id = this.props.match.params.id;
-    console.log(id, 'id');
     this.props.dispatch({
       type: 'class/getClassDetailById',
       payload: {
         id: id
       }
-    }).then(() => {
-      this.setState({
-        classIndex: this.props.classDetail.choice
-      })
     })
+
+    // 判斷缓存中是否存在用户名字和头像
+    let token = localStorage.getItem('bsyx-user-token');
+    if(token) {
+      this.props.dispatch({
+        type: 'class/getUserInfo'
+      }).then(() => {
+        this.setState({ 
+          user: this.props.user,
+          isLogin: true
+        });
+      })
+    }
   }
 
   // 点击预约报名出现的弹框
-  handleAppointment = (e) => {
-    e.stopPropagation();
-    let index = e.target.getAttribute('data-index');
+  handleAppointment = () => {
     this.setState({
       showAppointmentModal: true,
-      chooseClassIndex: index
     })
   }
 
@@ -49,7 +61,7 @@ class ClassDetail extends Component {
     this.setState({ showAppointmentModal: false })
   }
 
-  // 判断是否舒服内容
+  // 判断是否输入内容
   formIsFill = async () => {
     const values = await this.formRef.current.validateFields();
     if(values.username && values.telNumber) {
@@ -62,75 +74,83 @@ class ClassDetail extends Component {
   // 点击报名
   handleClickOk = async () => {
     const values = await this.formRef.current.validateFields();
-    let username = values.username;
-    let telNumber = values.telNumber;
-    console.log('报名表单提交')
+    let username = 
   }
 
-  render() {
-    const { classDetail } = this.props;
+  // 点击发表笔记
+  handleClickWriteNote = () => {
 
-    const columns = [
-      {
-        title: '名称',
-        dataIndex: 'name',
-        key: 'name'
-      },
-      {
-        title: '时间',
-        dataIndex: 'time',
-        key: 'time',
-        render: (text, record) => {
-          let time = record.beginTime + ' ~ ' + record.endTime;
-          return time;
-        }
-      },
-      {
-        title: '价格',
-        dataIndex: 'price',
-        key: 'price'
-      },
-      {
-        title: '名额',
-        dataIndex: 'itemNum',
-        key: 'itemNum'
-      },
-      {
-        title: '剩余名额',
-        dataIndex: 'sellNum',
-        key: 'sellNum',
-        render: (text, record) => {
-          let num = record.itemNum - record.sellNum;
-          return num;
-        }
-      },
-      {
-        title: '操作',
-        dataIndex: 'action',
-        key: 'action',
-        render: (text, record, index) => (
-          <Space size="middle">
-            <a onClick={this.handleAppointment} data-index={index}>预约报名</a>
-          </Space>
-        ),
-      },
-    ]
+  }
+
+  // 评论内容更改
+  handleChangeEvaluate = e => {
+    this.setState({ value: e.target.value })
+  }
+
+  // 点击发表评论
+  handleSubmitEvaluate = () => {
+    if (!this.state.value) {
+      return;
+    }
+
+    this.setState({
+      submitting: true,
+    });
+
+    setTimeout(() => {
+      this.setState({
+        submitting: false,
+        value: '',
+      });
+
+    }, 1000);
+  }
+
+  // 评论编辑框组件
+  renderEditor = ({value, submitting}) => (
+    <>
+      <Form.Item>
+        <TextArea rows={4} onChange={this.handleChangeEvaluate} value={value}  />
+      </Form.Item>
+      <Form.Item>
+        <Button htmlType="submit" loading={submitting} onClick={this.handleSubmitEvaluate} type="primary">
+          发表评论
+        </Button>
+      </Form.Item>
+    </>
+  );
+
+  // 评论列表组件
+  renderCommentList = ({ comments }) => (
+    <List
+      dataSource={comments}
+      itemLayout="horizontal"
+      renderItem={props => <Comment {...props} />}
+    />
+  )
+
+  render() {
+    const { classDetail, comments} = this.props;
+    const { submitting, value, user, isLogin } = this.state;
 
     return (
       JSON.stringify(classDetail) !== "{}" ? (
         <div className="ClassDetail">
-          <div className="class_title">
-            <h2>{classDetail.activity.name}</h2>
-          </div>
           <div className="class_message">
             <div className="class_message-cover">
-              <img src={classDetail.items[0].cover} />
+              <img src={classDetail.item.cover} />
             </div>
             <div className="class_message-detail">
+              <div>课程名称：{classDetail.item.name}</div>
               <div>举办城市：{classDetail.activity.province + classDetail.activity.city + classDetail.activity.county}</div>
               <div>课程类型：{classDetail.activity.labelName + ' | ' + classDetail.activity.subjectName}</div>
-              <div>课程时间：{classDetail.activity.timeStart.split(' ')[0]} 到 {classDetail.activity.timeEnd.split(' ')[0]}</div>
-              <div>课程价格：¥{classDetail.activity.minPrice + ' ~ ¥' + classDetail.activity.maxPrice}</div>
+              <div>课程时间：{classDetail.item.beginTime} 到 {classDetail.item.endTime}</div>
+              <div>课程价格：¥{classDetail.item.price}</div>
+              <div>课程名额：{classDetail.item.itemNum}</div>
+              <div className="class_action">
+                <Button type="primary" className="actionBtn" onClick={this.handleAppointment}>预约报名</Button>
+                <Button className="actionBtn" style={{ backgroundColor: 'orange', color: 'white' }}>收藏</Button>
+              </div>
               <div className="class_message-share">
                 <span>分享：</span>
                 <img src={require('../../resource/assets/微博.png')} />
@@ -139,7 +159,36 @@ class ClassDetail extends Component {
               </div>
             </div>
           </div>
+
           <Divider />
+
+          <div className="class_detail">
+            <div className="class_detail-tabs">
+              <Tabs defaultActiveKey="1">
+                <TabPane tab="课程简介" key="1" className="class_detail-tabpane">
+                  <div dangerouslySetInnerHTML={{ __html: classDetail.activity.detail}}></div>
+                </TabPane>
+                <TabPane tab="课程安排" key="2" className="class_detail-tabpane">
+                  <div dangerouslySetInnerHTML={{ __html: classDetail.activity.arrangement}}></div>
+                </TabPane>
+                <TabPane tab="注意事项" key="3" className="class_detail-tabpane">
+                  <div dangerouslySetInnerHTML={{ __html: classDetail.activity.matter}}></div>
+                </TabPane>
+                <TabPane tab="课程评论" key="4" className="class_detail-tabpane">
+                  <div className="class_evaluate">
+                    { classDetail.comments.length > 0 && this.renderCommentList({ comments: comments }) }
+                    { isLogin ? 
+                        <Comment
+                        avatar={ <Avatar src={user.avatar} alt={user.nickname} /> }
+                        content={ this.renderEditor({ value: value, submitting: submitting }) }
+                      /> : ''
+                    }
+                  </div>
+                </TabPane>
+              </Tabs>
+            </div>
+          </div>
+          
           <div className="org_detail">
             <div className="org_detail-left">
               <div className="busName">{classDetail.activity.busName}</div>
@@ -149,23 +198,20 @@ class ClassDetail extends Component {
               <img src={classDetail.activity.busAvatar} />
             </div>
           </div>
-          <div className="class_list">
-            <Table 
-              className="class_list-table"
-              columns={columns} 
-              dataSource={classDetail.items} 
-              expandable={{
-                expandedRowRender: record => <p>{record.detail}</p>
-              }}
-              expandRowByClick="true"
-              pagination={false}
-            />
-          </div>
 
-          {/* 课程评论区 */}
-          <div className="class_evaluate">
-
-          </div>
+          <div className="class_note">
+              <div className="note_header">
+                <h2>课程笔记</h2>
+                <Button type="primary">发表笔记</Button>
+              </div>
+              <div className="note_list">
+                {
+                  classDetail.notes.map((item, index) => {
+                    console.log(item, 'item')
+                  })
+                }
+              </div>
+            </div>
 
           <Modal
             title="预约报名"
@@ -178,7 +224,7 @@ class ClassDetail extends Component {
           >
             <Form {...layout} name="appointment" ref={this.formRef}>
               <Form.Item label="活动名称" name="activityName">
-                <span>{classDetail.items[this.state.chooseClassIndex].name}</span>
+                <span>{classDetail.item.name}</span>
               </Form.Item>
 
               <Form.Item label="姓名" name="username">
@@ -190,11 +236,11 @@ class ClassDetail extends Component {
               </Form.Item>
               
               <Form.Item label="课程时间" name="activityTime">
-                <span>{classDetail.items[this.state.chooseClassIndex].beginTime + ' ~ ' + classDetail.items[this.state.chooseClassIndex].endTime}</span>
+                <span>{classDetail.item.beginTime + ' ~ ' + classDetail.item.endTime}</span>
               </Form.Item>
 
               <Form.Item label="课程价格" name="activityPrice">
-                <span>{classDetail.items[this.state.chooseClassIndex].price}元</span>
+                <span>{classDetail.item.price}元</span>
               </Form.Item>
             </Form>
           </Modal>
