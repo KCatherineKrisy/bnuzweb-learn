@@ -1,0 +1,33 @@
+.note-list-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: 1px solid #EBEEF5;
+  box-shadow: 0 0 30px #EBEEF5;
+  margin-bottom: 20px;
+  width: 700px;
+  height: 90px;
+
+  .note-list-item-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 20px;
+  }
+
+  .note-list-item-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    margin-right: 20px;
+
+    .action {
+      margin-top: 5px;
+      img {
+        margin-left: 15px;
+      }
+      
+    }
+  }
+}

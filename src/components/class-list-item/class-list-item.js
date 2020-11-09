@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'dva'
 import './class-list-item.less'
 
 class ClassListItem extends Component {
+  componentDidMount() {
+    // console.log(this.props.classItem)
+  }
   render() {
     const { classItem } = this.props;
     return (
@@ -12,16 +16,16 @@ class ClassListItem extends Component {
           </div>
           <div className="class-detail">
             <span className="class-detail-name">{classItem.name}</span>
-            <span className="class-detail-tag">{classItem.tag}</span>
           </div>
         </div>
         <div className="item-right">
-          <span className="org-name">{classItem.org}</span>
-          <span className="time">{classItem.time}</span>
+          <div className="org-name">{classItem.busName}</div>
+          <div className="time">{classItem.gmtModified.split(' ')[0]}</div>
         </div>
+
       </div>
     );
   }
 }
 
-export default ClassListItem;
+export default connect(state => state.class)(ClassListItem);

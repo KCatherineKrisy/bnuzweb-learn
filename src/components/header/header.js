@@ -60,6 +60,10 @@ class Header extends Component {
     this.props.history.push('/OrgList')
   }
 
+  handleLinkUserInfo = () => {
+    this.props.history.push('/user/classlist')
+  }
+
   render() {
     return (
       <div className="header">
@@ -76,7 +80,7 @@ class Header extends Component {
           <span>热门好课</span>
           <span onClick={this.goToOrgList}>机构列表</span>
           <span>关于我们</span>
-          {this.state.isLogin ? <img className="header-right_right" src={require('../../resource/assets/头像.jpg')} width="30px" height="30px" /> : <a className="header-right_right" onClick={this.handleShowLogin}>登录</a>}
+          {this.state.isLogin ? <img className="header-right_right" src={require('../../resource/assets/头像.jpg')} width="30px" height="30px" onClick={this.handleLinkUserInfo}/> : <a className="header-right_right" onClick={this.handleShowLogin}>登录</a>}
         </div>
         
         <Modal

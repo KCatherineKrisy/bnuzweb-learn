@@ -1,0 +1,35 @@
+.OrderList {
+  display: flex;
+  flex-direction: column;
+
+  .OrderList-item {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: space-between;
+    width: 600px;
+    height: 80px;
+    border: 1px solid #EBEEF5;
+    box-shadow: 0 0 30px #EBEEF5;
+
+    .OrderList-item_left {
+      margin-left: 30px;
+
+      .OrderList-item_buyerNick {
+        margin-bottom: 5px;
+      }
+    }
+
+    .OrderList-item_right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      
+    }
+
+    .action { 
+      margin-right: 30px;
+    }
+  }
+}

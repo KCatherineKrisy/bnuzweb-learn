@@ -6,7 +6,6 @@ import './org-card.less'
 class OrgCard extends Component {
   // 点击跳转到机构详情页
   goToOrgDetail = () => {
-    console.log('test')
     this.props.history.push(`OrgDetail/${this.props.org.id}`)
   }
 

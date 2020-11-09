@@ -1,17 +1,15 @@
 import * as classService from '../services/ClassAPI'
 import * as userService from '../services/UserAPI'
-import { Modal } from 'antd'
+import { message, Modal } from 'antd'
 
 export default {
   namespace: 'class',
 
   state: {
-    searchClassList: [], // 查詢课程結果
-    searchOrgList: [], // 查询机构结果
+    searchClassList: [], // 课程查询结果
     total: 0, // 結果數量
     type: 'class', // class, organization
     keywords: '', // 關鍵詞
-    pageNo: 1, //  當前頁數
     pageSize: 8, // 一次返回的數量
     labelList: [], // 课程标签
     subjectList: [], // 课程类型 
@@ -24,10 +22,10 @@ export default {
   subscriptions: {},
 
   effects: {
-    // 获取课程搜索的标签、类型、的确
+    // 获取课程搜索的标签、类型、
     *getSearchOpinion({}, { call, put }) { 
       const data = yield call(classService.getSearchOpinion);
-      if(data.data.success === true) {
+      if(data.data.code === 20000) {
         yield put({
           type: 'updateSearchOpinion',
           payload: {
@@ -38,11 +36,10 @@ export default {
     },
 
     // 按照關鍵詞搜索課程
-    *searchClassItem({ payload: value }, { call, put, select }) {
-      let keywords = yield select(state => state.class.keywords);
-      // 关键词不为空且和现有的关键词不同，则重置页数为 1
-      if(!value.keywords || value.keywords !== keywords || value.searchFuc === 'click') {
-        yield put({ type: 'resetData'})
+    *searchClassItem({ payload: value, callback }, { call, put, select }) {
+      console.log(value, 'value')
+      if(value.searchFuc === 'click') {
+        value.pageNo = 1;
       }
       yield put({
         type: 'updateSearchKeywords',
@@ -51,19 +48,21 @@ export default {
           type: value.type, 
         }
       })
-      let pageNo = yield select(state => state.class.pageNo);
-      value.pageNo = pageNo;
+      let pageSize = yield select(state => state.class.pageSize);
+      value.pageSize = pageSize;
       const data = yield call(classService.searchClassItem, value);
-      if(data.data.success === true && data.data.data.total > 0) {
+      if(data.data.code === 20000 && data.data.data.total > 0) {
+        if(callback && typeof callback === 'function') {
+          callback(data.data.data);
+        }
         yield put({
           type: 'updateSearchList',
           payload: {
             total: data.data.data.total,
             searchClassList: data.data.data.rows,
-            pageNo: pageNo + 1
           }
         })
-      } else if (data.data.success === true && data.data.data.total === 0) {
+      } else if (data.data.code === 20000 && data.data.data.total === 0) {
         Modal.info({
           title: '搜索失败',
           content: '这个关键词搜不到内容呢，要不要换个试试~'
@@ -79,7 +78,7 @@ export default {
     // 根據活動 ID 獲取詳細信息
     *getClassDetailById({ payload: value }, { call, put }) {
       const data = yield call(classService.getClassDetailId, value);
-      if(data.data.success === true) {
+      if(data.data.code === 20000) {
         yield put({
           type: 'updateClassDetail',
           payload: {
@@ -89,43 +88,61 @@ export default {
       }
     },
 
-    // 添加評論到指定活動 id
-    *addComment({ payload: value }, { call, put, select }) {
-      const data = yield call(classService.addComment, value);
-      const activityId = yield select(state => state.classDetail.item.id);
-      if(data.data.code === 20000) {
-        const newData = yield call(classService.getClassDetailId, activityId);
-        if(newData.data.success === true) {
-          yield put({
-            type: 'updateClassComments',
-            payload: {
-              comments: newData.data.data.comments,
-            }
-          })
-        } else {
-          Modal.error({
-            title: '评论失败',
-            content: '评论失败，请重试哦！'
-          })
-        }
-      } else if (data.data.code === 20003) {
-        Modal.error({
-          title: '评论失败',
-          content: '报名参加课程后才能评论哦，快来报名吧！'
-        })
-      }
-    },
-
     // 獲取用戶信息用於評論
     *getUserInfo({ payload: value }, { call, put, select }) {
       const data = yield call(userService.getUserInfo);
-      if(data.data.success === true) {
+      if(data.data.code === 20000) {
         yield put({
           type: 'updateUserInfo',
           payload: {
             user: data.data.data.userDetail
           }
         })
+      }
+    },
+
+    // 发送报名请求
+    *addOrder({ payload: value, callback }, { call, put, select }) {
+      const data = yield call(classService.addOrder, value);
+      if(data.data.code === 20000) {
+        if(callback && typeof callback === 'function') {
+          callback(data.data.data);
+        }
+      }
+    },
+
+    // 根据订单号获取支付二维码
+    *createNative({ payload: value, callback }, { call, put }) {
+      const data = yield call(classService.createNative, value);
+      if(data.data.code === 20000) {
+        if(callback && typeof callback === 'function') {
+          callback(data.data.data)
+        }
+      } else {
+        Modal.error({
+          title: '网络错误',
+          content: '网络出错，请重试！'
+        })
+      }
+    },
+
+    //根据订单号获取支付状态
+    *queryPayStatus({ payload: value, callback }, { call, put }) {
+      const data = yield call(classService.queryPayStatus, value);
+      if(data.data.code === 25000) {
+        if(callback && typeof callback === 'function') {
+          callback(data.data.data)
+        }
+      }
+    },
+
+    // 发送收藏请求
+    *addCollection({ payload: value }, { call, put }) {
+      const data = yield call(classService.addCollection, value);
+      if(data.data.code === 20000) {
+        message.success('收藏成功')
+      } else {
+        message.error('收藏失败，请重试！')
       }
     }
   },
@@ -145,20 +162,14 @@ export default {
     updateSearchList(state, action) {
       return { 
         ...state, 
-        searchClassList: action.payload.searchClassList, 
         total: action.payload.total,
-        pageNo: action.payload.pageNo
+        searchClassList: action.payload.searchClassList,
       }
     },
 
     // 修改顯示框上的關鍵詞
     updateSearchKeywords(state, action) {
       return { ...state, keywords: action.payload.keywords }
-    },
-
-    // 重置页数
-    resetData(state, action) {
-      return { ...state, pageNo: 1, searchClassList: [], searchOrgList: [], total: 0 }
     },
 
     // 更新活動信息

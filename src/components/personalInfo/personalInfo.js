@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Modal, Form, Input, Cascader, Radio } from 'antd';
+import { Button, Modal, Form, Input, Radio } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { connect } from 'dva'
 import './personalInfo.less'

@@ -1,15 +1,31 @@
 import React, { Component } from 'react';
 import './UserSetting.less'
-import { withRouter } from 'react-router';
+import { withRouter, Route, Switch } from 'dva/router';
 import { connect } from 'dva'
+import PersonalInfo from '../../components/personalInfo/personalInfo'
+import BindAccount from '../../components/bindAccount/bindAccount'
+
+@withRouter
 class UserSetting extends Component {
-  state = {
-    user: {
-      id: 123456,
-      name: 'janette',
-      url: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1600933551900&di=c97bb7c3d2f64f55d451c9e1ad6dcc76&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201712%2F19%2F20171219234358_VRdrH.thumb.700_0.jpeg",
-    },
-  };
+  state = {};
+
+  componentDidMount() {
+    let token = localStorage.getItem('bsyx-user-token');
+    console.log(token)
+    if(token) {
+      return ;
+    } else {
+      this.props.history.push('/')
+    }
+  }
+
+  handleLinkInfo = () => {
+    this.props.history.push('/setting/personalInfo')
+  }
+
+  handleLinkBind = () => {
+    this.props.history.push('/setting/bindAccount')
+  }
 
   render() {
     const { user } = this.props;
@@ -27,13 +43,16 @@ class UserSetting extends Component {
             <span className="account_moduleName">账户管理</span>
             <div className="divider"></div>
             <div className="manageBtn">
-              <span className="personalInfo">个人信息</span>
-              <span className="accountBind">账户绑定</span>
+              <span className="personalInfo" onClick={this.handleLinkInfo}>个人信息</span>
+              <span className="accountBind" onClick={this.handleLinkBind}>账户绑定</span>
             </div>
           </div>
         </div>
         <div className="userSetting-content">
-          {this.props.children}
+          <Switch>
+            <Route path='/setting/personalInfo' component={PersonalInfo} />
+            <Route path='/setting/bindAccount' component={BindAccount} />
+          </Switch>
         </div>
       </div>
     );

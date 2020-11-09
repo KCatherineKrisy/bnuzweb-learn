@@ -26,3 +26,17 @@ export function getOrgDescribe(params) {
     method: 'GET',
   })
 }
+
+/**
+ * 根据新闻 id 获取详情
+ * @export
+ * @param {*} params
+ * @returns
+ */
+export function getNewsDetail(params) {
+  const pattern = compile(API.ORG.GET_NEWS_DETAIL);
+  const url = pattern({ nid: params.nid });
+  return request(url, {
+    method: 'GET'
+  })
+}

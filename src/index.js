@@ -13,6 +13,7 @@ const app = dva({
 app.model(require('./models/user').default);
 app.model(require('./models/class').default);
 app.model(require('./models/org').default);
+app.model(require('./models/app').default);
 
 // 路由
 app.router(RouterConfig)

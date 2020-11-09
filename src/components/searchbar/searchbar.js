@@ -16,7 +16,7 @@ class SearchBar extends Component {
     let url = this.props.location.pathname;
     let params = url.split('/');
     let type = params[params.length - 2];
-    let keywords = params[params.length - 1];
+    let keywords = decodeURIComponent(params[params.length - 1]);
     if(type === 'keywords') {
       this.setState({ keywords: keywords })
     }
@@ -35,18 +35,7 @@ class SearchBar extends Component {
     if(!this.state.keywords) {
       message.error('搜索关键词不得为空！');
     } else {
-      this.props.dispatch({
-        type: 'class/searchClassItem',
-        payload: {
-          keywords: this.state.keywords,
-          pageNo: this.props.pageNo,
-          pageSize: this.props.pageSize,
-          type: this.state.type,
-          searchFuc: 'click'
-        }
-      }).then(() => {
-        this.props.history.push(`/search/keywords/${this.state.keywords}`)
-      })
+      this.props.history.push(`/search/keywords/${this.state.keywords}`)
     }
   }
 

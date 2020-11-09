@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'dva'
-import { Tabs, Divider, Modal, Form, Input, Button, Comment, Avatar, List } from 'antd'
-import moment from 'moment';
+import { Tabs, Divider, Modal, Form, Input, Button, Comment, List, InputNumber } from 'antd'
 import NoteCard from '../../components/note-card/note-card'
 import './ClassDetail.less'
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
+const QRCode = require('qrcode.react');
 
 const layout = {
   labelCol: { span: 8 },
@@ -18,11 +18,12 @@ class ClassDetail extends Component {
 
   state = {
     showAppointmentModal: false, // 展示报名框
+    showPayModal: false, // 展示付款二维码
     btnDisable: false, // 是否可以报名
-    submiiting: false, // 是否提交中
-    value: '', // 评论文本
-    user: {}, // 用戶信息
     isLogin: false, // 是否登錄
+    itemNum: 1, // 报名数量
+    canAttend: true, // 能否报名
+    url: '', // 支付二维码
   }
 
   componentDidMount() {
@@ -32,6 +33,10 @@ class ClassDetail extends Component {
       type: 'class/getClassDetailById',
       payload: {
         id: id
+      }
+    }).then(() => {
+      if(this.props.classDetail.item.itemNum === 0) {
+        this.setState({ canAttend: false })
       }
     })
 
@@ -49,11 +54,22 @@ class ClassDetail extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.timer && clearTimeout(this.timer);
+  }
+
   // 点击预约报名出现的弹框
   handleAppointment = () => {
-    this.setState({
-      showAppointmentModal: true,
-    })
+    if(this.state.isLogin) {
+      this.setState({
+        showAppointmentModal: true,
+      })
+    } else {
+      Modal.error({
+        title: '报名失败',
+        content: '请先登录！'
+      })
+    }
   }
 
   // 关闭预约报名的弹框
@@ -64,46 +80,118 @@ class ClassDetail extends Component {
   // 判断是否输入内容
   formIsFill = async () => {
     const values = await this.formRef.current.validateFields();
-    if(values.username && values.telNumber) {
+    if(values.username && values.telNumber && values.telNumber.length === 11) {
       this.setState({ btnDisable: true })
     } else {
       this.setState({ btnDisable: false })
     }
   }
 
+  //  报名人数修改
+  handleChangeItemNum = (value) => {
+    this.setState({ itemNum: value })
+  }
+
   // 点击报名
   handleClickOk = async () => {
     const values = await this.formRef.current.validateFields();
-    let username = 
+    let contact = values.username;
+    let mobile = values.telNumber;
+    this.props.dispatch({
+      type: 'class/addOrder',
+      payload: {
+        items: [{
+          itemId : this.props.classDetail.item.id,
+          num: this.state.itemNum
+        }],
+        mobile: mobile,
+        contact: contact,
+      },
+      callback: (res) => {
+        this.setState({ 
+          showAppointmentModal: false,
+          showPayModal: true
+        })
+        this.createNative(res.orderId);
+      }
+    })
+  }
+
+  // 生成支付二维码
+  createNative = (orderId) => {
+    this.props.dispatch({
+      type: 'class/createNative',
+      payload: {
+        orderNo: orderId
+      },
+      callback: (res) => {
+        let url = res.code_url;
+        this.setState({ url });
+        // 设置定时器判断是否支付成功
+        this.timer = setInterval(() => {
+          this.getPayStatus(orderId);
+        }, 1000);
+      }
+    })
+  }
+
+  // 查询支付状态
+  getPayStatus = (orderId) => {
+    this.props.dispatch({
+      type: 'class/queryPayStatus',
+      payload: {
+        orderNo: orderId
+      },
+      callback: (res) => {
+        this.setState({ showPayModal: false });
+        this.timer && clearTimeout(this.timer);
+        Modal.info({
+          title: '报名成功',
+          content: (
+            "您已经成功报名该课程！"
+          )
+        })
+      }
+    })
+  }
+
+  // 关闭支付弹窗
+  handleClosePayModal = () => {
+    this.setState({ showPayModal: false });
+    this.timer && clearTimeout(this.timer);
   }
 
   // 点击发表笔记
   handleClickWriteNote = () => {
+    this.props.history.push(`/noteEdit/edit/${this.props.classDetail.activity.id}`)
+  }
 
+  // 点击机构
+  handleLinkOrgDetail = () => {
+    this.props.history.push(`/OrgDetail/${this.props.classDetail.activity.orgId}`)
+  }
+
+  // 点击收藏
+  handleClickCollect = () => {
+    if(this.state.isLogin) {
+      this.props.dispatch({
+        type: 'class/addCollection',
+        payload: {
+          orgCollectId: this.props.classDetail.item.id,
+          type: 0
+        }
+      })
+    } else {
+      Modal.error({
+        title: '收藏失败',
+        content: '请先登录！'
+      })
+    }
   }
 
   // 评论内容更改
   handleChangeEvaluate = e => {
     this.setState({ value: e.target.value })
-  }
-
-  // 点击发表评论
-  handleSubmitEvaluate = () => {
-    if (!this.state.value) {
-      return;
-    }
-
-    this.setState({
-      submitting: true,
-    });
-
-    setTimeout(() => {
-      this.setState({
-        submitting: false,
-        value: '',
-      });
-
-    }, 1000);
   }
 
   // 评论编辑框组件
@@ -125,13 +213,15 @@ class ClassDetail extends Component {
     <List
       dataSource={comments}
       itemLayout="horizontal"
-      renderItem={props => <Comment {...props} />}
+      renderItem={props => 
+        <Comment author={props.nickname} avatar={props.avatar} content={props.content} datetime={props.gmtModified.split(' ')[0]} />
+      }
     />
   )
 
   render() {
     const { classDetail, comments} = this.props;
-    const { submitting, value, user, isLogin } = this.state;
+    const { showPayModal, btnDisable, showAppointmentModal, itemNum, canAttend } = this.state;
 
     return (
       JSON.stringify(classDetail) !== "{}" ? (
@@ -148,8 +238,8 @@ class ClassDetail extends Component {
               <div>课程价格：¥{classDetail.item.price}</div>
               <div>课程名额：{classDetail.item.itemNum}</div>
               <div className="class_action">
-                <Button type="primary" className="actionBtn" onClick={this.handleAppointment}>预约报名</Button>
-                <Button className="actionBtn" style={{ backgroundColor: 'orange', color: 'white' }}>收藏</Button>
+                <Button type="primary" className="actionBtn" onClick={this.handleAppointment} disabled={!canAttend}>预约报名</Button>
+                <Button className="actionBtn" style={{ backgroundColor: 'orange', color: 'white' }} onClick={this.handleClickCollect}>收藏</Button>
               </div>
               <div className="class_message-share">
                 <span>分享：</span>
@@ -177,19 +267,13 @@ class ClassDetail extends Component {
                 <TabPane tab="课程评论" key="4" className="class_detail-tabpane">
                   <div className="class_evaluate">
                     { classDetail.comments.length > 0 && this.renderCommentList({ comments: comments }) }
-                    { isLogin ? 
-                        <Comment
-                        avatar={ <Avatar src={user.avatar} alt={user.nickname} /> }
-                        content={ this.renderEditor({ value: value, submitting: submitting }) }
-                      /> : ''
-                    }
                   </div>
                 </TabPane>
               </Tabs>
             </div>
           </div>
           
-          <div className="org_detail">
+          <div className="org_detail" onClick={this.handleLinkOrgDetail}>
             <div className="org_detail-left">
               <div className="busName">{classDetail.activity.busName}</div>
               <div className="busDes">{classDetail.activity.busDescribe}</div>
@@ -200,26 +284,26 @@ class ClassDetail extends Component {
           </div>
 
           <div className="class_note">
-              <div className="note_header">
-                <h2>课程笔记</h2>
-                <Button type="primary">发表笔记</Button>
-              </div>
-              <div className="note_list">
-                {
-                  classDetail.notes.map((item, index) => {
-                    console.log(item, 'item')
-                  })
-                }
-              </div>
+            <div className="note_header">
+              <h2>课程笔记</h2>
+              <Button type="primary" onClick={this.handleClickWriteNote}>发表笔记</Button>
             </div>
+            <div className="note_list">
+              {
+                classDetail.notes.map((item, index) => (
+                  <NoteCard item={item} />
+                ))
+              }
+            </div>
+          </div>
 
           <Modal
             title="预约报名"
-            visible={this.state.showAppointmentModal}
+            visible={showAppointmentModal}
             onCancel={this.handleClickCancel}
             okText="确认报名"
             footer={[
-              <Button disabled={!this.state.btnDisable} type="primary" onClick={this.handleClickOk}>确认报名</Button>
+              <Button disabled={!btnDisable} type="primary" onClick={this.handleClickOk}>确认报名</Button>
             ]}
           >
             <Form {...layout} name="appointment" ref={this.formRef}>
@@ -227,12 +311,21 @@ class ClassDetail extends Component {
                 <span>{classDetail.item.name}</span>
               </Form.Item>
 
-              <Form.Item label="姓名" name="username">
+              <Form.Item label="姓名" name="username" 
+                hasFeedback rules={[{ required: true, message: '请输入您的姓名！' }]}
+              >
                 <Input style={{ width: '200px'}} allowClear onChange={this.formIsFill} />
               </Form.Item>
 
-              <Form.Item label="联系方式" name="telNumber">
+              <Form.Item label="联系方式" name="telNumber" 
+                hasFeedback rules={[{ required: true, len: 11, message: '请保证手机号码正确且有效' }]}
+              >
                 <Input style={{ width: '200px'}} allowClear onChange={this.formIsFill}/>
+              </Form.Item>
+
+              <Form.Item label="报名人数" name="itemNum">
+                <InputNumber min={1} max={classDetail.item.itemNum} defaultValue={1} value={itemNum} onChange={this.handleChangeItemNum}/>
+                <span style={{ marginLeft: '5px' }}>剩余名额：{classDetail.item.itemNum}</span>
               </Form.Item>
               
               <Form.Item label="课程时间" name="activityTime">
@@ -243,6 +336,21 @@ class ClassDetail extends Component {
                 <span>{classDetail.item.price}元</span>
               </Form.Item>
             </Form>
+          </Modal>
+
+          <Modal
+            title=""
+            footer=""
+            visible={showPayModal}
+            onCancel={this.handleClosePayModal}
+          >
+            { this.state.url ? (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <QRCode size={250} value={this.state.url} style={{ margin: '0 auto' }}/>
+                <div style={{ fontSize: '18px', fontWeight: 'bold', textAlign: 'center' }}>打开微信扫一扫</div>
+                <div style={{ fontSize: '18px', fontWeight: 'bold', textAlign: 'center' }}>个人中心-订单页面可继续支付</div>
+              </div>
+            ) : ''}
           </Modal>
         </div>
       ) : ''

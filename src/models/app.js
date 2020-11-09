@@ -1,26 +1,54 @@
+import * as appService from '../services/AppAPI'
+import * as orgService from '../services/OrgAPI'
+
 export default {
-  // 当前 model 的名称
   namespace: 'app',
 
-  // 该 Model 当前的状态。数据保存在这里，直接决定了视图层的输出
   state: {
-    name: '這是 app 的 model',
-    loginModalVisible: false,
-    registerModalVisible: false
+    labelList: [], // 标签列表
+    newsList: [], // 新闻列表
   },
 
-  // 订阅器，管理所有组件
-  subscriptions: {
+  subscriptions: {},
 
-  },
-
-  // Action 处理器，处理异步动作
   effects: {
+    *getLabelList({ payload: value, callback }, { call, put }) {
+      const data = yield call(appService.getLabelList, value);
+      if(data.data.code === 20000) {
+        if(callback && typeof callback === 'function') {
+          callback(data.data.data)
+        }
+      }
+    },
 
+    *getNewsList({ payload: value, callback }, { call, put }) {
+      const data = yield call(appService.getNews, value);
+      if(data.data.code === 20000) {
+        if(callback && typeof callback === 'function') {
+          callback(data.data.data)
+        }
+      }
+    },
+
+    *getOrgList({ payload: value, callback }, { call, put }) {
+      const data = yield call(orgService.getOrgList);
+      if(data.data.code === 20000) {
+        if(callback && typeof callback === 'function') {
+          callback(data.data.data)
+        }
+      }
+    },
+
+    // 判断登录态是否过期
+    *getLoginInfo({ payload: value, callback }, { call, put }) {
+      const data = yield call(appService.getLoginInfo);
+      if(callback && typeof callback === 'function') {
+        callback(data)
+      }
+    }
   },
 
-  // Action 处理器，处理同步动作，用来算出最新的 State
   reducers: {
 
-  },
+  }
 }
